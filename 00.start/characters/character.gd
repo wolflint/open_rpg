@@ -16,7 +16,7 @@ func change_state(event):
 	state = _transitions[transition]
 	enter_state()
 
-	emit_signal("state_changed")
+	emit_signal("state_changed", state)
 
 func enter_state():
 	pass

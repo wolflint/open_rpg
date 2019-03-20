@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://characters/npc/Npc.tscn" type="PackedScene" id=1]
+
+[node name="NpcDemo" type="Node2D"]
+
+[node name="Npc" parent="." instance=ExtResource( 1 )]
+position = Vector2( 918, 403 )
+
+[node name="Npc2" parent="." instance=ExtResource( 1 )]
+position = Vector2( 532, 637 )
+
+[node name="Npc3" parent="." instance=ExtResource( 1 )]
+position = Vector2( 317, 237 )
+

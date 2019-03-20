@@ -1,0 +1,21 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://characters/Character.tscn" type="PackedScene" id=1]
+[ext_resource path="res://characters/npc/npc.gd" type="Script" id=2]
+[ext_resource path="res://characters/npc/body.png" type="Texture" id=3]
+[ext_resource path="res://characters/animations/BASE.anim" type="Animation" id=4]
+[ext_resource path="res://characters/animations/move.anim" type="Animation" id=5]
+
+[node name="Npc" instance=ExtResource( 1 )]
+script = ExtResource( 2 )
+
+[node name="Body" parent="Pivot" index="0"]
+texture = ExtResource( 3 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="4"]
+anims/BASE = ExtResource( 4 )
+anims/move = ExtResource( 5 )
+
+[node name="Timer" type="Timer" parent="." index="5"]
+one_shot = true
+
