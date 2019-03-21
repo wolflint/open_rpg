@@ -12,7 +12,9 @@ extents = Vector2( 18.1276, 15.8388 )
 [sub_resource type="DynamicFont" id=2]
 font_data = ExtResource( 4 )
 
-[node name="Character" type="KinematicBody2D"]
+[node name="Character" type="KinematicBody2D" groups=[
+"character",
+]]
 script = ExtResource( 1 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

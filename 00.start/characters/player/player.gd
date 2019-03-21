@@ -32,6 +32,7 @@ const SPEED = {
 	States.RUN: 700,
 	}
 
+const FALL_DURATION = 0.4
 const BUMP_DISTANCE = 50
 const JUMP_DURATION = {
 	States.BUMP: 0.2,
@@ -58,6 +59,10 @@ var _jump_duration = JUMP_DURATION[States.JUMP]
 var _jump_height = JUMP_HEIGHT[States.IDLE]
 
 var _collision_normal = Vector2()
+
+var _pit_position = Vector2()
+var _pit_distance = Vector2()
+
 var _last_input_direction = Vector2()
 
 func _init() -> void:
@@ -65,15 +70,20 @@ func _init() -> void:
 		[States.IDLE, Events.WALK]: States.WALK,
 		[States.IDLE, Events.RUN]: States.RUN,
 		[States.IDLE, Events.JUMP]: States.JUMP,
+		[States.IDLE, Events.FALL]: States.FALL,
 		[States.WALK, Events.STOP]: States.IDLE,
 		[States.WALK, Events.RUN]: States.RUN,
 		[States.WALK, Events.JUMP]: States.JUMP,
+		[States.WALK, Events.FALL]: States.FALL,
 		[States.RUN, Events.STOP]: States.IDLE,
 		[States.RUN, Events.WALK]: States.WALK,
 		[States.RUN, Events.JUMP]: States.JUMP,
+		[States.RUN, Events.FALL]: States.FALL,
 		[States.RUN, Events.BUMP]: States.BUMP,
 		[States.BUMP, Events.IDLE]: States.IDLE,
 		[States.JUMP, Events.IDLE]: States.IDLE,
+		[States.FALL, Events.RESPAWN]: States.RESPAWN,
+		[States.RESPAWN, Events.IDLE]: States.IDLE,
 	}
 
 func _ready() -> void:
@@ -159,6 +169,29 @@ func enter_state():
 			Tween.TRANS_LINEAR, 
 			Tween.EASE_IN)
 			$Tween.start()
+		
+		States.FALL:
+			$Tween.interpolate_property(
+				self, 
+				"scale", 
+				scale, 
+				Vector2(), 
+				FALL_DURATION/2.0,
+				Tween.TRANS_QUAD,
+				Tween.EASE_IN)
+			$Tween.start()
+		
+		States.RESPAWN:
+			position = _pit_position + _last_input_direction.rotated(PI) * _pit_distance #Change position and rotate 180 degrees
+			$Tween.interpolate_property(
+				self, 
+				"scale", 
+				scale, 
+				Vector2(1, 1), 
+				FALL_DURATION/2.0,
+				Tween.TRANS_LINEAR,
+				Tween.EASE_IN)
+			$Tween.start()
 
 static func get_raw_input(state, slide_count):
 	return {
@@ -188,3 +221,15 @@ static func decode_raw_iput(input):
 func _on_Tween_tween_completed(object, key):
 	if key == ":_animate_jump":
 		change_state(Events.IDLE)
+	if key == ":scale" and scale.round() == Vector2():
+		change_state(Events.RESPAWN)
+	if key == ":scale" and scale.round() == Vector2(1, 1):
+		change_state(Events.IDLE)
+
+func _on_Pit_body_fell(body, pit_position, pit_distance):
+	if body != self:
+		return
+	
+	_pit_position = pit_position
+	_pit_distance = pit_distance
+	change_state(States.FALL)
