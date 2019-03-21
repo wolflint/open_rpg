@@ -11,7 +11,7 @@ var knockback_direction = Vector2()
 export (float) var knockback_force = 10.0
 const KNOCKBACK_DURATION = 0.3
 
-enum States { IDLE, ATTACK, STAGGER }
+enum States { IDLE, ATTACK, STAGGER, DIE, DEATH }
 var state = null
 
 #export(PackedScene) var weapon_scene
@@ -19,8 +19,9 @@ export(String) var weapon_path = ""
 var weapon = null
 
 func _ready():
-	$Health.connect("health_changed", self, "on_Health_health_changed")
 	_change_state(States.IDLE)
+	$Health.connect("health_changed", self, "on_Health_health_changed")
+	$AnimationPlayer.connect("animation_finished", self, "_on_AnimationPlayer_animation_finished")
 
 	if not weapon_path:
 		return
@@ -35,6 +36,8 @@ func _change_state(new_state):
 	match state:
 		States.ATTACK:
 			set_physics_process(true)
+		States.DIE:
+			queue_free()
 
 	# Initialize the new state
 	match new_state:
@@ -53,6 +56,11 @@ func _change_state(new_state):
 
 			$Tween.interpolate_property(self, 'position', position, position + knockback_force * knockback_direction, KNOCKBACK_DURATION, Tween.TRANS_QUART, Tween.EASE_OUT)
 			$Tween.start()
+
+		States.DIE:
+			set_process_input(false)
+			$AnimationPlayer.play("die")
+			$CollisionShape2D.disabled = true
 
 	state = new_state
 	emit_signal('state_changed', new_state)
@@ -78,6 +86,10 @@ func on_Weapon_attack_finished():
 
 func on_Health_health_changed(new_health):
 	if new_health == 0:
-		queue_free()
+		_change_state(States.DIE)
 	else:
 		_change_state(States.STAGGER)
+
+func _on_AnimationPlayer_animation_finished(name):
+	if name == "die":
+		_change_state(States.DEATH)
