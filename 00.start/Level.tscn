@@ -2,8 +2,8 @@
 
 [ext_resource path="res://characters/npc/Npc.tscn" type="PackedScene" id=1]
 [ext_resource path="res://environment/Rock.tscn" type="PackedScene" id=2]
-[ext_resource path="res://characters/player/Player.tscn" type="PackedScene" id=3]
-[ext_resource path="res://environment/Pit.tscn" type="PackedScene" id=4]
+[ext_resource path="res://environment/Pit.tscn" type="PackedScene" id=3]
+[ext_resource path="res://characters/player/Player.tscn" type="PackedScene" id=4]
 
 [node name="Level" type="Node2D"]
 
@@ -30,9 +30,9 @@ position = Vector2( 517, 167 )
 [node name="Rock" parent="YSort" instance=ExtResource( 2 )]
 position = Vector2( 913, 525 )
 
-[node name="Player" parent="YSort" instance=ExtResource( 3 )]
-position = Vector2( 602, 485 )
+[node name="Pit" parent="YSort" instance=ExtResource( 3 )]
+position = Vector2( 789, 334 )
 
-[node name="Pit" parent="YSort/Player" instance=ExtResource( 4 )]
-position = Vector2( 187, -151 )
+[node name="Player" parent="YSort" instance=ExtResource( 4 )]
+position = Vector2( 602, 485 )
 
