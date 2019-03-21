@@ -5,12 +5,16 @@ signal attack_finished
 var state = null
 enum States {IDLE, ATTACK}
 
+var hit_bodies = []
 
 func _ready():
 	$AnimationPlayer.connect("animation_finished", self, "_on_AnimationPlayer_animation_finished")
 	_change_state(States.IDLE)
 
 func _change_state(new_state):
+	match state:
+		States.ATTACK:
+			hit_bodies = []
 	match new_state:
 		States.IDLE:
 			set_physics_process(false)
@@ -24,9 +28,13 @@ func _change_state(new_state):
 func _physics_process(delta):
 	var bodies = get_overlapping_bodies()
 	for body in bodies:
-		if body.is_a_parent_of(self) and not body.has_node("Health"):
+		var body_id = body.get_rid().get_id()
+		if body_id in hit_bodies:
 			continue
-		body.queue_free()
+		if body.has_node("Health") and not body.is_a_parent_of(self) :
+			hit_bodies.append(body_id)
+			var health_node = body.get_node("Health")
+			health_node.take_damage(1)
 
 
 func attack():

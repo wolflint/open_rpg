@@ -15,6 +15,7 @@ export(String) var weapon_path = ""
 var weapon = null
 
 func _ready():
+	$Health.connect("health_changed", self, "on_Health_health_changed")
 	_change_state(States.IDLE)
 
 	if not weapon_path:
@@ -60,3 +61,8 @@ func _physics_process(delta):
 
 func on_Weapon_attack_finished():
 	_change_state(States.IDLE)
+
+func on_Health_health_changed(new_health):
+	_change_state(States.IDLE)
+	if new_health == 0:
+		queue_free()
