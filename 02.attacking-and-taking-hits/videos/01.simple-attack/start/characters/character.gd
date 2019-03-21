@@ -7,7 +7,11 @@ var input_direction = Vector2()
 var look_direction = Vector2(1, 0)
 var last_move_direction = Vector2(1, 0)
 
-enum States { IDLE, ATTACK }
+var knockback_direction = Vector2()
+export (float) var knockback_force = 10.0
+const KNOCKBACK_DURATION = 0.3
+
+enum States { IDLE, ATTACK, STAGGER }
 var state = null
 
 #export(PackedScene) var weapon_scene
@@ -44,6 +48,11 @@ func _change_state(new_state):
 			weapon.attack()
 			$AnimationPlayer.play("idle")
 			set_physics_process(false)
+		States.STAGGER:
+			$AnimationPlayer.play('stagger')
+
+			$Tween.interpolate_property(self, 'position', position, position + knockback_force * knockback_direction, KNOCKBACK_DURATION, Tween.TRANS_QUART, Tween.EASE_OUT)
+			$Tween.start()
 
 	state = new_state
 	emit_signal('state_changed', new_state)
@@ -58,11 +67,17 @@ func _physics_process(delta):
 		look_direction.x = input_direction.x
 		$BodyPivot.set_scale(Vector2(look_direction.x, 1))
 
+func take_damage(source, amount):
+	if self.is_a_parent_of(source):
+		return
+	knockback_direction = (global_position - source.global_position).normalized()
+	$Health.take_damage(amount)
 
 func on_Weapon_attack_finished():
 	_change_state(States.IDLE)
 
 func on_Health_health_changed(new_health):
-	_change_state(States.IDLE)
 	if new_health == 0:
 		queue_free()
+	else:
+		_change_state(States.STAGGER)
