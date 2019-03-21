@@ -227,9 +227,9 @@ func _on_Tween_tween_completed(object, key):
 		change_state(Events.IDLE)
 
 func _on_Pit_body_fell(body, pit_position, pit_distance):
-	if body != self:
+	if body != self: 
 		return
 	
 	_pit_position = pit_position
 	_pit_distance = pit_distance
-	change_state(States.FALL)
+	change_state(Events.FALL)
