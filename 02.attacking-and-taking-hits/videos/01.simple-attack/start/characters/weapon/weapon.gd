@@ -43,6 +43,7 @@ func _change_state(new_state):
 			hit_bodies = []
 			attack_input_state = Attack_Input_States.IDLE
 			ready_for_next_attack = false
+			print("unready")
 	match new_state:
 		States.IDLE:
 			combo_count = 0
@@ -50,7 +51,7 @@ func _change_state(new_state):
 			monitoring = false
 		States.ATTACK:
 			attack_current = combo[combo_count - 1]
-			print("attack_current " + attack_current)
+			print("attack_current " + str(attack_current))
 			$AnimationPlayer.play(attack_current['animation'])
 			monitoring = true
 	state = new_state
@@ -100,4 +101,5 @@ func set_attack_input_listening():
 
 func set_ready_for_next_attack():
 	ready_for_next_attack = true
+	print("ready")
 #	print("Ready")
