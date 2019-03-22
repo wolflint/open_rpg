@@ -19,7 +19,7 @@ var weapon = null
 
 
 func _ready():
-	_change_state(IDLE)
+	_change_state(STATES.IDLE)
 	$Health.connect('health_changed', self, '_on_Health_health_changed')
 	$AnimationPlayer.connect('animation_finished', self, '_on_AnimationPlayer_animation_finished')
 

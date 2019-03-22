@@ -59,8 +59,8 @@ func _change_state(new_state):
 
 		States.DIE:
 			set_process_input(false)
+			$CollisionShape2D.set_deferred("disabled", true)
 			$AnimationPlayer.play("die")
-			$CollisionShape2D.disabled = true
 
 	state = new_state
 	emit_signal('state_changed', new_state)
